@@ -1,0 +1,8 @@
+obj/
+
+GameStore.Client/bin/
+GameStore.Client/obj/
+
+
+GameStore.Server/bin/
+GameStore.Server/obj/

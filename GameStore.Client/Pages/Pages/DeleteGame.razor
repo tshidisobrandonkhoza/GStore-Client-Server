@@ -1,0 +1,58 @@
+﻿ 
+@using Models
+ 
+ 
+<div class="modal" tabindex="-1" role="dialog" id="deleteGame">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteGameTitle">@title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            @* <div class="modal-body">
+                <p>Are you cetain?</p>
+            </div> *@
+
+            <div class="modal-footer">
+                <button @onclick="@Confirm" type="button" class="btn btn-primary" data-dismiss="modal">Delete</button>
+                <button @onclick="@Cancel" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@code {
+
+
+    [Parameter]
+    public Game? Game { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+    @* modal title *@
+    private string title = string.Empty;
+    protected override void OnParametersSet()
+    {
+        title = $"Delete {Game?.Name}?";
+    }
+
+    @* start methods triggered by footer button *@
+    private void Confirm()
+    {
+        OnClose.InvokeAsync(true);
+    }
+    private void Cancel()
+    {
+        OnClose.InvokeAsync(false);
+    }
+    @* end   methods triggered by footer button *@
+
+
+}

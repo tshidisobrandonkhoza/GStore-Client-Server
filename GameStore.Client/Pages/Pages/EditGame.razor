@@ -1,0 +1,109 @@
+﻿@page "/game"
+@page "/game/{id:int}"
+@using Models
+@inject NavigationManager NavigationManager
+
+<PageTitle>@title</PageTitle>
+
+<h1>Game Catalog</h1>
+<h3>@title</h3>
+@if (game is null)
+{
+    <p><em>Loading</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-sm-4">
+            <EditForm Model="@game" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <InputText id="name" @bind-Value="game.Name" class="form-control"></InputText>
+                </div>
+                <div class="mb-3">
+                    <label for="Genre" class="form-label">Genre:</label>
+                    <InputSelect id="genre" @bind-Value="game.Genre" class="form-select">
+                        <option value="">Select Here</option>
+                        <option value="Family">Family</option>
+                        <option value="Racing">Racing</option>
+                        <option value="War">War</option>
+                        <option value="Fighting">Fighting</option>
+                        <option value="Playing">Playing</option>
+                        <option value="Soccer">Soccer</option>
+                    </InputSelect>
+                </div>
+                <div class="mb-3">
+                    <label for="Price" class="form-label">Price:</label>
+                    <InputNumber id="price" @bind-Value="game.Price" class="form-control"></InputNumber>
+                </div>
+                <div class="mb-3">
+                    <label for="ReleasedDate" class="form-label">Released Date:</label>
+                    <InputDate id="releasedDate" @bind-Value="game.ReleasedDate" class="form-control"></InputDate>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+
+                <button type="submit" class="btn btn-secondary" @onclick="@Cancel">Cancel</button>
+
+            </EditForm>
+        </div>
+    </div>
+}
+@code {
+    @* parameter that arrives - allow it to be null *@
+    [Parameter]
+    public int? Id { get; set; }
+    @* Initialezed by OnparametersSet() if the is a Parameter *@
+    private Game? game;
+
+    private string title = string.Empty;
+
+    @* As soons as parameter arrives - called *@
+protected override void OnParametersSet()
+    {
+        @* check if the the parameter ID is null *@
+        if (Id is not null)
+        {
+            Game existingGame = GameClient.GetGame(Id.Value);
+            game = new()
+                {
+                    Id = existingGame.Id,
+                    Name = existingGame.Name,
+                    Genre = existingGame.Genre,
+                    Price = existingGame.Price,
+                    ReleasedDate = existingGame.ReleasedDate
+                };
+                title = $"Updating Game {game.Name}";
+        }
+        else
+        {
+            game = new()
+                {
+                    Name = string.Empty,
+                    Genre = string.Empty,
+                    ReleasedDate = DateTime.Now
+                };
+                
+                title = "Adding New Game";
+        }
+    }
+    public void HandleSubmit()
+    {
+        if (game!.Id != 0)
+        {
+            GameClient.UpdateGame(game);
+        }
+        else
+        {
+            GameClient.AddGame(game);
+        }
+        NavigationManager.NavigateTo("/");
+    }
+    public void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+}

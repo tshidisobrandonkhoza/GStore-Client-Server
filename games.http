@@ -1,0 +1,35 @@
+@baseUrl = http://localhost:5261
+
+GET {{baseUrl}}/games
+
+###
+GET {{baseUrl}}/games/1
+
+###
+GET {{baseUrl}}/games/10
+
+###
+POST {{baseUrl}}/games
+Content-Type: application/json
+
+{
+    "name" : "AAASQUAD",
+    "genre": "Soccer",
+    "price": 49.99,
+    "releasedDate": "2010-09-30"
+}
+
+###
+PUT {{baseUrl}}/games/3
+Content-Type: application/json
+
+{
+    "name" : "Roar",
+    "genre": "Soccer",
+    "price": 9.99,
+    "releasedDate": "2010-09-30" 
+}
+
+###
+
+DELETE {{baseUrl}}/games/2 
