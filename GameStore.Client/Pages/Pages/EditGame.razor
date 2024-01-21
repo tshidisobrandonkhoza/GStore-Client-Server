@@ -2,6 +2,7 @@
 @page "/game/{id:int}"
 @using Models
 @inject NavigationManager NavigationManager
+@inject GameClient gClient;
 
 <PageTitle>@title</PageTitle>
 
@@ -15,7 +16,7 @@ else
 {
     <div class="row">
         <div class="col-sm-4">
-            <EditForm Model="@game" OnValidSubmit="HandleSubmit">
+            <EditForm Model="@game" OnValidSubmit="HandleSubmitAsync">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="mb-3">
@@ -61,12 +62,13 @@ else
     private string title = string.Empty;
 
     @* As soons as parameter arrives - called *@
-protected override void OnParametersSet()
+protected override async Task OnParametersSetAsync()
     {
         @* check if the the parameter ID is null *@
         if (Id is not null)
         {
-            Game existingGame = GameClient.GetGame(Id.Value);
+            Game existingGame = await gClient.GetGameAsync(Id.Value);
+            @* Game existingGame = GameClient.GetGame(Id.Value); *@
             game = new()
                 {
                     Id = existingGame.Id,
@@ -89,15 +91,18 @@ protected override void OnParametersSet()
                 title = "Adding New Game";
         }
     }
-    public void HandleSubmit()
+    public async Task HandleSubmitAsync()
     {
         if (game!.Id != 0)
         {
-            GameClient.UpdateGame(game);
+            await gClient.UpdateGameAsync(game);
+            @* GameClient.UpdateGame(game); *@
         }
         else
         {
-            GameClient.AddGame(game);
+            
+            await gClient.AddGameAsync(game);
+            @* GameClient.AddGame(game); *@
         }
         NavigationManager.NavigateTo("/");
     }

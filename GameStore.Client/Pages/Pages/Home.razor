@@ -1,7 +1,10 @@
 ﻿@page "/"
 @using Models
-<PageTitle>Game Catalog</PageTitle>
 @inject NavigationManager NavigationManager
+@inject GameClient gClient;
+
+<PageTitle>Game Catalog</PageTitle>
+
 
 <h1>Game Catalog</h1>
 <div class="row mb-4">
@@ -17,7 +20,7 @@
 else
 {
     @* sends props to the delete Game Component |Game| Onclose *@
-    <DeleteGame Game="@currentGame" OnClose="@onDelModalClose">
+    <DeleteGame Game="@currentGame" OnClose="@onDelModalCloseAsync">
 
     </DeleteGame>
 
@@ -62,10 +65,11 @@ else
     private Game? currentGame { get; set; }
 
 
-    protected override void OnInitialized()
+    protected  override async Task OnInitializedAsync()
     {
         @* base.OnInitialized(); *@
-        games = GameClient.GetGames();
+      //  games = GameClient.GetGames();
+      games = await gClient.GetGamesAsync();
     }
 
     @* method for navigating to adding a game *@
@@ -79,12 +83,14 @@ else
         NavigationManager.NavigateTo($"/game/{id}");
     }
 
-    private void onDelModalClose(bool decision)
+    private async Task onDelModalCloseAsync(bool decision)
     {
         if (decision)
         {
-            GameClient.DeleteGame(currentGame!.Id);
-            games = GameClient.GetGames();
+            @* GameClient.DeleteGame(currentGame!.Id);
+            games = GameClient.GetGames(); *@
+           await gClient.DeleteGameAsync(currentGame!.Id);
+           games =  await gClient.GetGamesAsync();
         }
     }
 }
