@@ -13,7 +13,7 @@ POST {{baseUrl}}/games
 Content-Type: application/json
 
 {
-    "name" : "AAASQUAD",
+    "name" : "Fifa",
     "genre": "Soccer",
     "price": 49.99,
     "releasedDate": "2010-09-30"
