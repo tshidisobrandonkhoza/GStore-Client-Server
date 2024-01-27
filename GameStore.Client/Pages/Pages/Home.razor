@@ -11,6 +11,10 @@
     <div class="col-sm-6">
         <button type="button" class="btn btn-primary" @onclick="CreateGame">New Game</button>
     </div>
+    <div class="col-sm-6">
+        <input type="text" class="form-control" placeholder="Search Name or Genre" 
+        @bind="searchField"   @bind:event="oninput"  @onkeyup="FetchGamesAsync"  />
+    </div>
 </div>
 
 @if (games == null)
@@ -49,7 +53,7 @@ else
                             <iconify-icon icon="akar-icons:pencil" style="color: white"></iconify-icon>
                         </button>
                         <button class="btn bg-info" @onclick="(()=> currentGame = game)" data-toggle="modal"
-                            data-target="#deleteGame" >
+                            data-target="#deleteGame">
                             <iconify-icon icon="mdi:bin-outline" style="color: white;"></iconify-icon>
                         </button>
                     </td>
@@ -64,12 +68,12 @@ else
     @* Game selected for delete *@
     private Game? currentGame { get; set; }
 
-
-    protected  override async Task OnInitializedAsync()
+    private String? searchField;
+    protected override async Task OnInitializedAsync()
     {
-        @* base.OnInitialized(); *@
-      //  games = GameClient.GetGames();
-      games = await gClient.GetGamesAsync();
+
+        @* games = await gClient.GetGamesAsync(searchField); *@
+        await FetchGamesAsync();
     }
 
     @* method for navigating to adding a game *@
@@ -87,10 +91,16 @@ else
     {
         if (decision)
         {
-            @* GameClient.DeleteGame(currentGame!.Id);
-            games = GameClient.GetGames(); *@
-           await gClient.DeleteGameAsync(currentGame!.Id);
-           games =  await gClient.GetGamesAsync();
+
+            await gClient.DeleteGameAsync(currentGame!.Id);
+            @* games = await gClient.GetGamesAsync(searchField); *@
+            await FetchGamesAsync();
         }
+    }
+
+    private async Task FetchGamesAsync()
+    {
+        games = await gClient.GetGamesAsync(searchField);
+
     }
 }
